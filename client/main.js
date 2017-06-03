@@ -13,14 +13,19 @@ const unauthenticatedPages = ['/', '/signup'];
 const authenticatedPages = ['/links'];
 const onEnterPublicPage = () => {
   if (Meteor.userId()) {
-    
+    browserHistory.replace('/links');
   }
-}
+};
+const onEnterPrivatePage = () => {
+  if (!Meteor.userId()) {
+    browserHistory.replace('/');
+  }
+};
 const routes = (
   <Router history={browserHistory}>
-    <Route path="/" component={Login} onEnter={} />
-    <Route path="/signup" component={Signup} onEnter={} />
-    <Route path="/links" component={Link} />
+    <Route path="/" component={Login} onEnter={onEnterPublicPage} />
+    <Route path="/signup" component={Signup} onEnter={onEnterPublicPage} />
+    <Route path="/links" component={Link} onEnter={onEnterPrivatePage}/>
     <Route path="*" component={NotFound} />
   </Router>
 );
@@ -31,14 +36,12 @@ Tracker.autorun(() => {
   const isUnauthenticatedPage = unauthenticatedPages.includes(pathname);
   const isAuthenticatedPage = authenticatedPages.includes(pathname);
 
-  // IF on an unauthenticatedpage and logged in redirect to /links user push()
   if (isAuthenticated && isUnauthenticatedPage) {
-    browserHistory.push('/links');
+    browserHistory.replace('/links');
   }
   if (!isAuthenticated && isAuthenticatedPage) {
-    browserHistory.push('/');
+    browserHistory.replace('/');
   }
-  // If on an authenticated page and not logged in push to /
 });
 
 Meteor.startup(() => {
