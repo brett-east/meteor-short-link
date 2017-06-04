@@ -23,7 +23,7 @@ export default class Login extends React.Component {
         });
       } else {
         this.setState({
-          error: err.reason
+          error: ''
         });
       }
     });
